@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Vocale Empatico</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #chat {
+      background: #161b22;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      overflow-y: auto;
+      min-height: 300px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+    .msg {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 80%;
+      line-height: 1.4;
+    }
+    .user {
+      background-color: #238636;
+      align-self: flex-end;
+      color: white;
+      margin-left: auto;
+    }
+    .bot {
+      background-color: #30363d;
+      align-self: flex-start;
+      color: #e6edf3;
+      margin-right: auto;
+    }
+    #controls {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    button {
+      background-color: #238636;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      padding: 14px 22px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.1s;
+    }
+    button:hover {
+      background-color: #2ea043;
+      transform: scale(1.05);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    #status {
+      font-size: 0.9rem;
+      color: #8b949e;
+    }
+    audio {
+      margin-top: 10px;
+    }
+    .pulse {
+      box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6); }
+      70% { box-shadow: 0 0 0 15px rgba(35, 134, 54, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎧 Chatbot Vocale Empatico</h1>
+  <div id="chat"></div>
+  <div id="controls">
+    <button id="record">🎤 Premi per parlare</button>
+    <div id="status">In attesa...</div>
+    <audio id="replyAudio" controls hidden></audio>
+  </div>
+  <script>
+    const recordBtn = document.getElementById('record');
+    const chatBox = document.getElementById('chat');
+    const statusText = document.getElementById('status');
+    const audioEl = document.getElementById('replyAudio');
+    let mediaRecorder;
+    let chunks = [];
+    function addMessage(text, sender) {
+      const div = document.createElement('div');
+      div.classList.add('msg', sender);
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    async function sendAudio(blob) {
+      const form = new FormData();
+      form.append('file', blob, 'input.webm');
+      statusText.textContent = "🎙️ Elaborazione in corso...";
+      recordBtn.disabled = true;
+      try {
+        const res = await fetch('https://n8n.srv1060901.hstgr.cloud/webhook-test/dafa96e5-048b-4012-8035-416847fd8e17', {
+          method: 'POST',
+          body: form
+        });
+        if (!res.ok) throw new Error('Errore nella risposta del server');
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.startsWith('audio/')) {
+          const buffer = await res.arrayBuffer();
+          const blobOut = new Blob([buffer], { type: contentType });
+          const url = URL.createObjectURL(blobOut);
+          audioEl.src = url;
+          audioEl.hidden = false;
+          audioEl.play();
+          addMessage("🔊 Risposta vocale ricevuta", "bot");
+        } else {
+          const text = await res.text();
+          addMessage(text, "bot");
+        }
+      } catch (err) {
+        console.error(err);
+        addMessage("⚠️ Errore durante l'invio: " + err.message, "bot");
+      } finally {
+        recordBtn.disabled = false;
+        statusText.textContent = "In attesa...";
+      }
+    }
+    recordBtn.onclick = async () => {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        recordBtn.textContent = "🎤 Premi per parlare";
+        recordBtn.classList.remove('pulse');
+        statusText.textContent = "Invio audio...";
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        chunks = [];
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          addMessage("🗣️ Hai parlato...", "user");
+          sendAudio(blob);
+        };
+        mediaRecorder.start();
+        recordBtn.textContent = "⏹️ Ferma registrazione";
+        recordBtn.classList.add('pulse');
+        statusText.textContent = "🎙️ Registrazione in corso...";
+      } catch (err) {
+        alert("Errore nell'accesso al microfono: " + err.message);
+      }
+    };
+  </script>
+</body>
+</html>
