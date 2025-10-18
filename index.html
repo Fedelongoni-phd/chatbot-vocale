@@ -17,81 +17,29 @@
       margin: 0;
       padding: 40px 20px;
     }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      text-align: center;
-    }
+    h1 { font-size: 1.8rem; margin-bottom: 20px; text-align: center; }
     #chat {
-      background: #161b22;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 600px;
-      padding: 20px;
-      overflow-y: auto;
-      min-height: 300px;
+      background: #161b22; border-radius: 12px; width: 100%; max-width: 600px;
+      padding: 20px; overflow-y: auto; min-height: 300px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     }
-    .msg {
-      margin: 10px 0;
-      padding: 10px 14px;
-      border-radius: 10px;
-      max-width: 80%;
-      line-height: 1.4;
-    }
-    .user {
-      background-color: #238636;
-      align-self: flex-end;
-      color: white;
-      margin-left: auto;
-    }
-    .bot {
-      background-color: #30363d;
-      align-self: flex-start;
-      color: #e6edf3;
-      margin-right: auto;
-    }
-    #controls {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
+    .msg { margin: 10px 0; padding: 10px 14px; border-radius: 10px; max-width: 80%; line-height: 1.4; }
+    .user { background-color: #238636; align-self: flex-end; color: white; margin-left: auto; }
+    .bot { background-color: #30363d; align-self: flex-start; color: #e6edf3; margin-right: auto; }
+    #controls { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
     button {
-      background-color: #238636;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      padding: 14px 22px;
-      border-radius: 30px;
-      cursor: pointer;
+      background-color: #238636; border: none; color: white; font-size: 1rem;
+      padding: 14px 22px; border-radius: 30px; cursor: pointer;
       transition: background 0.3s, transform 0.1s;
     }
-    button:hover {
-      background-color: #2ea043;
-      transform: scale(1.05);
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    #status {
-      font-size: 0.9rem;
-      color: #8b949e;
-    }
-    audio {
-      margin-top: 10px;
-    }
-    .pulse {
-      box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6);
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6); }
-      70% { box-shadow: 0 0 0 15px rgba(35, 134, 54, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0); }
-    }
+    button:hover { background-color: #2ea043; transform: scale(1.05); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    #status { font-size: 0.9rem; color: #8b949e; }
+    audio { margin-top: 10px; }
+    .pulse { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6); }
+                       70% { box-shadow: 0 0 0 15px rgba(35, 134, 54, 0); }
+                       100% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0); } }
   </style>
 </head>
 <body>
@@ -121,7 +69,15 @@
 
     async function sendAudio(blob) {
       const form = new FormData();
-      form.append('file', blob, 'input.webm');
+
+      // ✅ sessione per la memoria (inviata al webhook n8n)
+      const sessionId = localStorage.getItem('sessionId') || crypto.randomUUID();
+      localStorage.setItem('sessionId', sessionId);
+      form.append('sessionId', sessionId);
+
+      // ✅ n8n aspetta il file nel campo "file0"
+      form.append('file0', blob, 'input.webm');
+
       statusText.textContent = "🎙️ Elaborazione in corso...";
       recordBtn.disabled = true;
 
@@ -133,16 +89,16 @@
 
         if (!res.ok) throw new Error('Errore nella risposta del server');
 
-        // ✅ Leggiamo la risposta come file binario (audio)
-        const arrayBuffer = await res.arrayBuffer();
-        const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
+        // ✅ Ricevi il file audio binario
+        const audioBlob = await res.blob();
+        if (audioBlob.size < 100) throw new Error('File audio ricevuto vuoto o corrotto');
 
-        if (audioBlob.size < 10) throw new Error('File audio ricevuto vuoto o corrotto');
-
+        // ✅ Riproduci l’audio
         const url = URL.createObjectURL(audioBlob);
         audioEl.src = url;
         audioEl.hidden = false;
-        audioEl.play();
+        audioEl.load();
+        await audioEl.play().catch(() => console.warn('Autoplay bloccato: premere Play manualmente'));
 
         addMessage("🔊 Risposta vocale ricevuta", "bot");
       } catch (err) {
@@ -165,7 +121,7 @@
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
         chunks = [];
         mediaRecorder.ondataavailable = e => chunks.push(e.data);
         mediaRecorder.onstop = () => {
