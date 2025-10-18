@@ -102,13 +102,16 @@
     <div id="status">In attesa...</div>
     <audio id="replyAudio" controls hidden></audio>
   </div>
+
   <script>
     const recordBtn = document.getElementById('record');
     const chatBox = document.getElementById('chat');
     const statusText = document.getElementById('status');
     const audioEl = document.getElementById('replyAudio');
+
     let mediaRecorder;
     let chunks = [];
+
     function addMessage(text, sender) {
       const div = document.createElement('div');
       div.classList.add('msg', sender);
@@ -116,27 +119,33 @@
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
+
     async function sendAudio(blob) {
       const form = new FormData();
       form.append('file', blob, 'input.webm');
+
       statusText.textContent = "🎙️ Elaborazione in corso...";
       recordBtn.disabled = true;
+
       try {
-        const res = await fetch('https://n8n.srv1060901.hstgr.cloud/webhook-test/dafa96e5-048b-4012-8035-416847fd8e17', {
+        const res = await fetch('https://n8n.srv1060901.hstgr.cloud/webhook/dafa96e5-048b-4012-8035-416847fd8e17', {
           method: 'POST',
           body: form
         });
+
         if (!res.ok) throw new Error('Errore nella risposta del server');
+
+        // 👇 Ricevi l’audio come blob binario
         const contentType = res.headers.get('content-type');
         if (contentType && contentType.startsWith('audio/')) {
-          const buffer = await res.arrayBuffer();
-          const blobOut = new Blob([buffer], { type: contentType });
-          const url = URL.createObjectURL(blobOut);
-          audioEl.src = url;
+          const audioBlob = await res.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          audioEl.src = audioUrl;
           audioEl.hidden = false;
           audioEl.play();
           addMessage("🔊 Risposta vocale ricevuta", "bot");
         } else {
+          // Se per qualche motivo arriva testo (fallback)
           const text = await res.text();
           addMessage(text, "bot");
         }
@@ -148,6 +157,7 @@
         statusText.textContent = "In attesa...";
       }
     }
+
     recordBtn.onclick = async () => {
       if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
@@ -156,16 +166,19 @@
         statusText.textContent = "Invio audio...";
         return;
       }
+
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         chunks = [];
+
         mediaRecorder.ondataavailable = e => chunks.push(e.data);
         mediaRecorder.onstop = () => {
           const blob = new Blob(chunks, { type: 'audio/webm' });
           addMessage("🗣️ Hai parlato...", "user");
           sendAudio(blob);
         };
+
         mediaRecorder.start();
         recordBtn.textContent = "⏹️ Ferma registrazione";
         recordBtn.classList.add('pulse');
