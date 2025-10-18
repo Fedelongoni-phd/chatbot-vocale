@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chatbot Vocale Empatico</title>
   <style>
     body {
@@ -106,17 +106,17 @@
   </div>
 
   <script>
-    const recordBtn = document.getElementById("record");
-    const chatBox = document.getElementById("chat");
-    const statusText = document.getElementById("status");
-    const audioEl = document.getElementById("replyAudio");
+    const recordBtn = document.getElementById('record');
+    const chatBox = document.getElementById('chat');
+    const statusText = document.getElementById('status');
+    const audioEl = document.getElementById('replyAudio');
 
     let mediaRecorder;
     let chunks = [];
 
     function addMessage(text, sender) {
-      const div = document.createElement("div");
-      div.classList.add("msg", sender);
+      const div = document.createElement('div');
+      div.classList.add('msg', sender);
       div.textContent = text;
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -124,44 +124,34 @@
 
     async function sendAudio(blob) {
       const form = new FormData();
-      form.append("file", blob, "input.webm");
+      form.append('file', blob, 'input.webm');
 
       statusText.textContent = "🎙️ Elaborazione in corso...";
       recordBtn.disabled = true;
 
       try {
-        // ✅ URL del webhook di produzione n8n
-        const res = await fetch(
-          "https://n8n.srv1060901.hstgr.cloud/webhook/dafa96e5-048b-4012-8035-416847fd8e17",
-          {
-            method: "POST",
-            body: form,
-          }
-        );
+        const res = await fetch("https://n8n.srv1060901.hstgr.cloud/webhook/dafa96e5-048b-4012-8035-416847fd8e17", {
+          method: "POST",
+          body: form
+        });
 
         if (!res.ok) throw new Error("Errore nella risposta del server");
 
-        // 👇 Gestione del flusso audio
         const audioBlob = await res.blob();
-        if (audioBlob.size < 10) {
-          throw new Error("File audio ricevuto vuoto o corrotto");
-        }
+        if (audioBlob.size < 10) throw new Error("File audio ricevuto vuoto o corrotto");
 
         const audioUrl = URL.createObjectURL(audioBlob);
         audioEl.src = audioUrl;
         audioEl.hidden = false;
         audioEl.play();
 
-        // Mostra un messaggio visivo durante la riproduzione
         statusText.textContent = "🗣️ Ginevra sta parlando...";
         addMessage("🔊 Risposta vocale ricevuta", "bot");
 
-        audioEl.onended = () => {
-          statusText.textContent = "In attesa...";
-        };
+        audioEl.onended = () => { statusText.textContent = "In attesa..."; };
       } catch (err) {
         console.error(err);
-        addMessage("⚠️ Errore durante l'invio: " + err.message, "bot");
+        addMessage("⚠️ Errore: " + err.message, "bot");
         statusText.textContent = "❌ Errore, riprova";
       } finally {
         recordBtn.disabled = false;
@@ -182,7 +172,7 @@
         mediaRecorder = new MediaRecorder(stream);
         chunks = [];
 
-        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
         mediaRecorder.onstop = () => {
           const blob = new Blob(chunks, { type: "audio/webm" });
           addMessage("🗣️ Hai parlato...", "user");
