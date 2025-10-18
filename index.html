@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot Vocale Empatico</title>
+  <title>Chatbot Vocale</title>
   <style>
     body {
-      background-color: #0d1117;
-      color: #e6edf3;
+      background-color: #ffffff;
+      color: #111111;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
@@ -17,33 +17,101 @@
       margin: 0;
       padding: 40px 20px;
     }
-    h1 { font-size: 1.8rem; margin-bottom: 20px; text-align: center; }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #1f6feb; /* azzurro principale */
+    }
+
     #chat {
-      background: #161b22; border-radius: 12px; width: 100%; max-width: 600px;
-      padding: 20px; overflow-y: auto; min-height: 300px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      background: #f6f8fa;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      overflow-y: auto;
+      min-height: 300px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border: 1px solid #d0d7de;
     }
-    .msg { margin: 10px 0; padding: 10px 14px; border-radius: 10px; max-width: 80%; line-height: 1.4; }
-    .user { background-color: #238636; align-self: flex-end; color: white; margin-left: auto; }
-    .bot { background-color: #30363d; align-self: flex-start; color: #e6edf3; margin-right: auto; }
-    #controls { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+    .msg {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 80%;
+      line-height: 1.4;
+    }
+
+    .user {
+      background-color: #1f6feb; /* azzurro principale */
+      align-self: flex-end;
+      color: white;
+      margin-left: auto;
+    }
+
+    .bot {
+      background-color: #eaeef2;
+      align-self: flex-start;
+      color: #111111;
+      margin-right: auto;
+    }
+
+    #controls {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
     button {
-      background-color: #238636; border: none; color: white; font-size: 1rem;
-      padding: 14px 22px; border-radius: 30px; cursor: pointer;
+      background-color: #1f6feb; /* azzurro */
+      border: none;
+      color: white;
+      font-size: 1rem;
+      padding: 14px 22px;
+      border-radius: 30px;
+      cursor: pointer;
       transition: background 0.3s, transform 0.1s;
+      box-shadow: 0 4px 10px rgba(31, 111, 235, 0.2);
     }
-    button:hover { background-color: #2ea043; transform: scale(1.05); }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    #status { font-size: 0.9rem; color: #8b949e; }
-    audio { margin-top: 10px; }
-    .pulse { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.6); }
-                       70% { box-shadow: 0 0 0 15px rgba(35, 134, 54, 0); }
-                       100% { box-shadow: 0 0 0 0 rgba(35, 134, 54, 0); } }
+
+    button:hover {
+      background-color: #388bfd; /* azzurro più chiaro */
+      transform: scale(1.05);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #status {
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    audio {
+      margin-top: 10px;
+    }
+
+    .pulse {
+      box-shadow: 0 0 0 0 rgba(31, 111, 235, 0.5);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(31, 111, 235, 0.5); }
+      70% { box-shadow: 0 0 0 15px rgba(31, 111, 235, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(31, 111, 235, 0); }
+    }
   </style>
 </head>
 <body>
-  <h1>🎧 Chatbot Vocale Empatico</h1>
+  <h1>🎧 Chatbot Vocale</h1>
   <div id="chat"></div>
   <div id="controls">
     <button id="record">🎤 Premi per parlare</button>
@@ -69,13 +137,9 @@
 
     async function sendAudio(blob) {
       const form = new FormData();
-
-      // ✅ sessione per la memoria (inviata al webhook n8n)
       const sessionId = localStorage.getItem('sessionId') || crypto.randomUUID();
       localStorage.setItem('sessionId', sessionId);
       form.append('sessionId', sessionId);
-
-      // ✅ n8n aspetta il file nel campo "file0"
       form.append('file0', blob, 'input.webm');
 
       statusText.textContent = "🎙️ Elaborazione in corso...";
@@ -89,16 +153,14 @@
 
         if (!res.ok) throw new Error('Errore nella risposta del server');
 
-        // ✅ Ricevi il file audio binario
         const audioBlob = await res.blob();
         if (audioBlob.size < 100) throw new Error('File audio ricevuto vuoto o corrotto');
 
-        // ✅ Riproduci l’audio
         const url = URL.createObjectURL(audioBlob);
         audioEl.src = url;
         audioEl.hidden = false;
         audioEl.load();
-        await audioEl.play().catch(() => console.warn('Autoplay bloccato: premere Play manualmente'));
+        await audioEl.play().catch(() => console.warn('Autoplay bloccato'));
 
         addMessage("🔊 Risposta vocale ricevuta", "bot");
       } catch (err) {
