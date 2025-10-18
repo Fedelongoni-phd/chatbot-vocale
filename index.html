@@ -96,9 +96,7 @@
 </head>
 <body>
   <h1>🎧 Chatbot Vocale Empatico</h1>
-
   <div id="chat"></div>
-
   <div id="controls">
     <button id="record">🎤 Premi per parlare</button>
     <div id="status">In attesa...</div>
@@ -110,7 +108,6 @@
     const chatBox = document.getElementById('chat');
     const statusText = document.getElementById('status');
     const audioEl = document.getElementById('replyAudio');
-
     let mediaRecorder;
     let chunks = [];
 
@@ -125,44 +122,43 @@
     async function sendAudio(blob) {
       const form = new FormData();
       form.append('file', blob, 'input.webm');
-
       statusText.textContent = "🎙️ Elaborazione in corso...";
       recordBtn.disabled = true;
 
       try {
-        const res = await fetch("https://n8n.srv1060901.hstgr.cloud/webhook/dafa96e5-048b-4012-8035-416847fd8e17", {
-          method: "POST",
+        const res = await fetch('https://n8n.srv1060901.hstgr.cloud/webhook/dafa96e5-048b-4012-8035-416847fd8e17', {
+          method: 'POST',
           body: form
         });
 
-        if (!res.ok) throw new Error("Errore nella risposta del server");
+        if (!res.ok) throw new Error('Errore nella risposta del server');
 
-        const audioBlob = await res.blob();
-        if (audioBlob.size < 10) throw new Error("File audio ricevuto vuoto o corrotto");
+        // ✅ Leggiamo la risposta come file binario (audio)
+        const arrayBuffer = await res.arrayBuffer();
+        const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
 
-        const audioUrl = URL.createObjectURL(audioBlob);
-        audioEl.src = audioUrl;
+        if (audioBlob.size < 10) throw new Error('File audio ricevuto vuoto o corrotto');
+
+        const url = URL.createObjectURL(audioBlob);
+        audioEl.src = url;
         audioEl.hidden = false;
         audioEl.play();
 
-        statusText.textContent = "🗣️ Ginevra sta parlando...";
         addMessage("🔊 Risposta vocale ricevuta", "bot");
-
-        audioEl.onended = () => { statusText.textContent = "In attesa..."; };
       } catch (err) {
         console.error(err);
         addMessage("⚠️ Errore: " + err.message, "bot");
-        statusText.textContent = "❌ Errore, riprova";
       } finally {
         recordBtn.disabled = false;
+        statusText.textContent = "In attesa...";
       }
     }
 
     recordBtn.onclick = async () => {
-      if (mediaRecorder && mediaRecorder.state === "recording") {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
         recordBtn.textContent = "🎤 Premi per parlare";
-        recordBtn.classList.remove("pulse");
+        recordBtn.classList.remove('pulse');
         statusText.textContent = "Invio audio...";
         return;
       }
@@ -171,17 +167,15 @@
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         chunks = [];
-
         mediaRecorder.ondataavailable = e => chunks.push(e.data);
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: "audio/webm" });
+          const blob = new Blob(chunks, { type: 'audio/webm' });
           addMessage("🗣️ Hai parlato...", "user");
           sendAudio(blob);
         };
-
         mediaRecorder.start();
         recordBtn.textContent = "⏹️ Ferma registrazione";
-        recordBtn.classList.add("pulse");
+        recordBtn.classList.add('pulse');
         statusText.textContent = "🎙️ Registrazione in corso...";
       } catch (err) {
         alert("Errore nell'accesso al microfono: " + err.message);
