@@ -1,1 +1,86 @@
+body {
+  background-color: #ffffff;
+  color: #111111;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 40px 20px;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #0a3069; /* dark blue tone */
+}
+
+#chat {
+  background: #f6f8fa;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  overflow-y: auto;
+  min-height: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d0d7de;
+}
+
+.msg {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  max-width: 80%;
+  line-height: 1.4;
+}
+
+.user {
+  background-color: #0a3069;
+  align-self: flex-end;
+  color: white;
+  margin-left: auto;
+}
+
+.bot {
+  background-color: #eaeef2;
+  align-self: flex-start;
+  color: #111111;
+  margin-right: auto;
+}
+
+#controls {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+}
+
+#userInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #0a3069;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+}
+
+button:hover {
+  background-color: #1a4d9a;
+  transform: scale(1.05);
+}
 
