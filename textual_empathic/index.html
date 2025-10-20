@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💜 Text Chatbot</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>💜 Text Chatbot</title>
 
-  <!-- CSS (percorso relativo alla cartella) -->
-  <link rel="stylesheet" href="./assets/style.css?v=2" />
+    <!-- Foglio di stile -->
+    <link rel="stylesheet" href="./assets/style.css?v=3" />
 
-  <!-- Markdown -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</head>
-<body>
-  <h1>💬 💜 <span>Text Chatbot</span></h1>
+    <!-- Libreria per il Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <h1>💬💜 Text Chatbot</h1>
 
-  <div class="chat-container">
-    <div id="chat" class="chat-box"></div>
+    <div class="chat-container">
+      <div id="chat"></div>
 
-    <div class="input-area">
-      <input id="userInput" type="text" placeholder="Type your message..." />
-      <button id="send">Send</button>
+      <div class="input-area">
+        <input
+          id="userInput"
+          type="text"
+          placeholder="Type your message..."
+        />
+        <button id="send">Send</button>
+      </div>
     </div>
-  </div>
 
-  <!-- JS -->
-  <script src="https://fedelongoni-phd.github.io/multimodal-chatbots/textual_empathic/assets/script.js"></script>
-</body>
+    <!-- Script principale -->
+    <script src="./assets/script.js"></script>
+  </body>
 </html>
