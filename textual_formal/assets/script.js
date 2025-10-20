@@ -34,9 +34,9 @@ async function sendMessage() {
   chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
-    // 🔗 URL del Webhook di TEST (modifica qui per la versione di produzione)
+    // 🔗 URL del Webhook di PRODUZIONE
     const res = await fetch(
-      "https://n8n.srv1060901.hstgr.cloud/webhook-test/e69d6e9f-2c8b-4dbf-b93b-99f39923ce6f/chat",
+      "https://n8n.srv1060901.hstgr.cloud/webhook/e69d6e9f-2c8b-4dbf-b93b-99f39923ce6f/chat",
       {
         method: "POST",
         headers: {
