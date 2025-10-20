@@ -1,1 +1,80 @@
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: #f6f8fa;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 30px 20px;
+}
+
+h1 {
+  color: #1f6feb;
+  text-align: center;
+}
+
+#chat {
+  background: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  overflow-y: auto;
+  min-height: 400px;
+  margin-bottom: 20px;
+}
+
+.msg {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  max-width: 80%;
+  line-height: 1.4;
+}
+
+.user {
+  background-color: #1f6feb;
+  color: white;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.bot {
+  background-color: #eaeef2;
+  color: #111;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+#controls {
+  display: flex;
+  gap: 10px;
+  max-width: 600px;
+  width: 100%;
+}
+
+#userInput {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #1f6feb;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #388bfd;
+}
 
