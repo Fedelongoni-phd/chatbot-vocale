@@ -21,7 +21,7 @@ async function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
-  // --- Sessione per memoria del bot ---
+  // --- Gestione sessione per memoria del bot ---
   const sessionId =
     localStorage.getItem("sessionId_formale_testo") || crypto.randomUUID();
   localStorage.setItem("sessionId_formale_testo", sessionId);
@@ -34,6 +34,7 @@ async function sendMessage() {
   chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
+    // 🔗 URL del Webhook di TEST
     const res = await fetch(
       "https://n8n.srv1060901.hstgr.cloud/webhook-test/e69d6e9f-2c8b-4dbf-b93b-99f39923ce6f/chat",
       {
@@ -48,8 +49,10 @@ async function sendMessage() {
       }
     );
 
+    // --- GESTIONE ERRORI ---
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
 
+    // --- OTTIENI RISPOSTA DAL SERVER ---
     const data = await res.json();
 
     // Rimuove il messaggio di attesa
