@@ -1,60 +1,84 @@
-// --- Empathic Text Chatbot Script (TEST MODE) --- //
-
+// --- ELEMENTI DELLA CHAT ---
 const chatBox = document.getElementById("chat");
 const userInput = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
+const sendBtn = document.getElementById("send");
 
-// 👉 URL del tuo webhook di TEST (n8n)
-const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook-test/c87f3f26-4323-44cd-b610-03b990efd8c3";
-
-// funzione per aggiungere messaggi nella chat
+// --- FUNZIONE: aggiunge un messaggio in chat ---
 function addMessage(text, sender) {
   const div = document.createElement("div");
   div.classList.add("msg", sender);
-  div.textContent = text;
+
+  // ✅ Converte Markdown in HTML
+  const formatted = window.marked ? marked.parse(text) : text;
+  div.innerHTML = formatted;
+
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// invio messaggio all’agente empatico
+// --- FUNZIONE PRINCIPALE: invia messaggio a n8n ---
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
 
+  // Mostra subito il messaggio dell’utente
   addMessage(text, "user");
   userInput.value = "";
-  sendBtn.disabled = true;
+
+  // --- Gestione sessione per memoria del bot ---
+  const sessionId =
+    localStorage.getItem("sessionId_empatico_testo") || crypto.randomUUID();
+  localStorage.setItem("sessionId_empatico_testo", sessionId);
+
+  // Messaggio temporaneo di attesa
+  const waiting = document.createElement("div");
+  waiting.classList.add("msg", "bot");
+  waiting.textContent = "💭 Sto pensando...";
+  chatBox.appendChild(waiting);
+  chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
-    const sessionId =
-      localStorage.getItem("sessionId_empatic") || crypto.randomUUID();
-    localStorage.setItem("sessionId_empatic", sessionId);
+    // 🔗 URL del Webhook n8n EMPATICO
+    const res = await fetch(
+      "https://n8n.srv1060901.hstgr.cloud/webhook/b37cb498-e21a-4a99-a507-93def91fc18f",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: text,
+          sessionId,
+        }),
+      }
+    );
 
-    console.log("📤 Sending message to n8n:", { message: text, sessionId });
-
-    const res = await fetch(N8N_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, sessionId }),
-    });
-
-    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
 
     const data = await res.json();
-    console.log("✅ Response from n8n:", data);
 
-    const reply = data.output || data.text || "⚠️ Nessuna risposta ricevuta.";
+    // Rimuove il messaggio di attesa
+    waiting.remove();
+
+    // Mostra la risposta del bot (interpretata come Markdown)
+    const reply =
+      data.output ||
+      data.text ||
+      data.reply ||
+      "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
   } catch (err) {
-    console.error("❌ Error:", err);
-    addMessage("⚠️ Errore: " + err.message, "bot");
-  } finally {
-    sendBtn.disabled = false;
+    console.error("Errore:", err);
+
+    waiting.remove();
+    addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 }
 
-// eventi click e invio con ENTER
+// --- EVENTI: invio messaggio ---
 sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
+
+console.log("💜 Script empatico caricato correttamente");
