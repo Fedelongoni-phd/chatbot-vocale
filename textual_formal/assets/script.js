@@ -21,7 +21,7 @@ async function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
-  // --- Gestione sessione per memoria del bot ---
+  // --- Sessione per memoria del bot ---
   const sessionId =
     localStorage.getItem("sessionId_formale_testo") || crypto.randomUUID();
   localStorage.setItem("sessionId_formale_testo", sessionId);
