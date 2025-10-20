@@ -8,13 +8,10 @@ function addMessage(text, sender) {
   const div = document.createElement("div");
   div.classList.add("msg", sender);
 
-  // ✅ Conversione Markdown → HTML semplice
-  const formatted = text
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // **grassetto**
-    .replace(/\*(.*?)\*/g, "<em>$1</em>") // *corsivo*
-    .replace(/\n/g, "<br>"); // a capo
+  // ✅ Converte tutto il Markdown in HTML
+  const formatted = marked.parse(text);
+  div.innerHTML = formatted;
 
-  div.innerHTML = formatted; // usa HTML, non textContent
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -56,26 +53,21 @@ async function sendMessage() {
       }
     );
 
-    // --- GESTIONE ERRORI HTTP ---
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
 
-    // --- OTTIENI RISPOSTA DAL SERVER ---
     const data = await res.json();
 
     // Rimuove il messaggio di attesa
     waiting.remove();
 
-    // --- MOSTRA RISPOSTA DEL BOT ---
+    // Mostra la risposta del bot (interpretata come Markdown)
     const reply =
       data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
   } catch (err) {
     console.error("Errore:", err);
 
-    // Rimuove il messaggio di attesa
     waiting.remove();
-
-    // Mostra errore lato utente
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 }
