@@ -34,7 +34,7 @@ async function sendMessage() {
   chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
-    // 🔗 URL del Webhook di TEST
+    // 🔗 URL del Webhook di TEST (modifica qui per la versione di produzione)
     const res = await fetch(
       "https://n8n.srv1060901.hstgr.cloud/webhook-test/e69d6e9f-2c8b-4dbf-b93b-99f39923ce6f/chat",
       {
@@ -49,7 +49,7 @@ async function sendMessage() {
       }
     );
 
-    // --- GESTIONE ERRORI ---
+    // --- GESTIONE ERRORI HTTP ---
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
 
     // --- OTTIENI RISPOSTA DAL SERVER ---
@@ -58,9 +58,9 @@ async function sendMessage() {
     // Rimuove il messaggio di attesa
     waiting.remove();
 
-    // Mostra la risposta del bot
+    // --- MOSTRA RISPOSTA DEL BOT ---
     const reply =
-      data.text || data.reply || "💬 Nessuna risposta ricevuta dal server.";
+      data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
   } catch (err) {
     console.error("Errore:", err);
@@ -68,7 +68,7 @@ async function sendMessage() {
     // Rimuove il messaggio di attesa
     waiting.remove();
 
-    // Messaggio di errore lato utente
+    // Mostra errore lato utente
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 }
