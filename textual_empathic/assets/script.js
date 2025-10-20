@@ -5,7 +5,7 @@ const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
 // 👉 URL del tuo webhook empatico (n8n)
-const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook/PASTE-YOUR-EMPATIC-WEBHOOK-HERE";
+const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook/c87f3f26-4323-44cd-b610-03b990efd8c3";
 
 // funzione per aggiungere messaggi nella chat
 function addMessage(text, sender) {
