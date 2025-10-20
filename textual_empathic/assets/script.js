@@ -1,8 +1,13 @@
+// --- Textual Formal Chatbot Script --- //
+
 const chatBox = document.getElementById("chat");
 const userInput = document.getElementById("userInput");
-const sendBtn = document.getElementById("send");
+const sendBtn = document.getElementById("sendBtn");
 
-// Add message to chat box
+// 👉 URL del tuo Webhook n8n
+const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook/c87f3f26-4323-44cd-b610-03b990efd8c3";
+
+// funzione per aggiungere messaggi nella chat
 function addMessage(text, sender) {
   const div = document.createElement("div");
   div.classList.add("msg", sender);
@@ -11,35 +16,40 @@ function addMessage(text, sender) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Send message to backend (placeholder for n8n webhook)
+// invio messaggio all’agente
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
 
   addMessage(text, "user");
   userInput.value = "";
+  sendBtn.disabled = true;
 
   try {
-    const res = await fetch(
-      "https://n8n.srv1060901.hstgr.cloud/webhook/your_empathic_text_webhook",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      }
-    );
+    const sessionId =
+      localStorage.getItem("sessionId_formal") || crypto.randomUUID();
+    localStorage.setItem("sessionId_formal", sessionId);
 
-    if (!res.ok) throw new Error("Server error");
+    const res = await fetch(N8N_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, sessionId }),
+    });
+
+    if (!res.ok) throw new Error("Errore nel server");
 
     const data = await res.json();
-    const reply = data.reply || "💬 No response from server.";
+    const reply = data.output || data.text || "⚠️ Nessuna risposta ricevuta.";
     addMessage(reply, "bot");
   } catch (err) {
     console.error(err);
-    addMessage("⚠️ Connection error.", "bot");
+    addMessage("⚠️ Errore: " + err.message, "bot");
+  } finally {
+    sendBtn.disabled = false;
   }
 }
 
+// evento di click e invio con ENTER
 sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
