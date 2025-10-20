@@ -29,7 +29,7 @@ async function sendMessage() {
 
   try {
     const res = await fetch(
-      "https://n8n.srv1060901.hstgr.cloud/webhook-test/6b0d8b12-2c2b-413c-9463-f6120dcaf3fd/chat",
+      "https://n8n.srv1060901.hstgr.cloud/webhook/6b0d8b12-2c2b-413c-9463-f6120dcaf3fd/chat",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
