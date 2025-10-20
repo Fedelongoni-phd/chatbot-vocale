@@ -1,11 +1,11 @@
-// --- Empathic Text Chatbot Script --- //
+// --- Empathic Text Chatbot Script (TEST MODE) --- //
 
 const chatBox = document.getElementById("chat");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
-// 👉 URL del tuo webhook empatico (n8n)
-const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook/c87f3f26-4323-44cd-b610-03b990efd8c3";
+// 👉 URL del tuo webhook di TEST (n8n)
+const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook-test/c87f3f26-4323-44cd-b610-03b990efd8c3";
 
 // funzione per aggiungere messaggi nella chat
 function addMessage(text, sender) {
@@ -30,20 +30,24 @@ async function sendMessage() {
       localStorage.getItem("sessionId_empatic") || crypto.randomUUID();
     localStorage.setItem("sessionId_empatic", sessionId);
 
+    console.log("📤 Sending message to n8n:", { message: text, sessionId });
+
     const res = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text, sessionId }),
     });
 
-    if (!res.ok) throw new Error("Server error");
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
 
     const data = await res.json();
-    const reply = data.output || data.text || "⚠️ No response received.";
+    console.log("✅ Response from n8n:", data);
+
+    const reply = data.output || data.text || "⚠️ Nessuna risposta ricevuta.";
     addMessage(reply, "bot");
   } catch (err) {
-    console.error(err);
-    addMessage("⚠️ Error: " + err.message, "bot");
+    console.error("❌ Error:", err);
+    addMessage("⚠️ Errore: " + err.message, "bot");
   } finally {
     sendBtn.disabled = false;
   }
