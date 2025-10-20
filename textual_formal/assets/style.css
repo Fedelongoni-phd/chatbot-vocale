@@ -1,6 +1,12 @@
-/* ===== FORMAL TEXT CHATBOT – EMPATHIC STRUCTURE + FORMAL COLORS ===== */
+:root {
+  --accent-color: #004aad;      /* blu formale */
+  --accent-hover: #003380;
+  --user-bubble: #004aad;
+  --bot-bubble: #f1f1f1;
+  --container-bg: #f6f8fa;
+}
 
-/* --- LAYOUT BASE --- */
+/* STILE UNIFICATO */
 body {
   background-color: #ffffff;
   color: #111111;
@@ -14,12 +20,11 @@ body {
   padding: 40px 20px;
 }
 
-/* --- HEADER --- */
 h1 {
   font-size: 1.8rem;
   margin-bottom: 24px;
   text-align: center;
-  color: #004aad; /* blu formale */
+  color: var(--accent-color);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -27,29 +32,26 @@ h1 {
   gap: 8px;
 }
 
-/* --- CONTENITORE DELLA CHAT --- */
 .chat-container {
-  background: #f6f8fa;
+  background: var(--container-bg);
   width: 100%;
   max-width: 600px;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #d0d7de;
+  padding: 24px 20px 80px;
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid #d0d7de;
-  padding: 24px 20px 80px; /* spazio per input “flottante” */
-  position: relative;
 }
 
-/* --- AREA MESSAGGI --- */
 #chat {
   flex-grow: 1;
   overflow-y: auto;
   padding-right: 8px;
 }
 
-/* --- MESSAGGI --- */
 .msg {
   margin: 10px 0;
   padding: 10px 14px;
@@ -60,23 +62,20 @@ h1 {
   font-size: 1rem;
 }
 
-/* --- MESSAGGIO UTENTE --- */
 .msg.user {
-  background-color: #004aad; /* blu intenso */
+  background-color: var(--user-bubble);
   color: #ffffff;
   align-self: flex-end;
   margin-left: auto;
 }
 
-/* --- MESSAGGIO BOT --- */
 .msg.bot {
-  background-color: #eaeef2; /* grigio chiaro */
+  background-color: var(--bot-bubble);
   color: #111;
   align-self: flex-start;
   margin-right: auto;
 }
 
-/* --- INPUT FLOTTANTE IN STILE “EMPATICO” --- */
 .input-area {
   position: absolute;
   bottom: 16px;
@@ -101,7 +100,7 @@ h1 {
 }
 
 #send {
-  background-color: #004aad;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 0 20px;
@@ -113,18 +112,6 @@ h1 {
 }
 
 #send:hover {
-  background-color: #003380;
+  background-color: var(--accent-hover);
   transform: scale(1.05);
-}
-
-/* --- SCROLLBAR --- */
-#chat::-webkit-scrollbar {
-  width: 8px;
-}
-#chat::-webkit-scrollbar-thumb {
-  background: #cfd8dc;
-  border-radius: 4px;
-}
-#chat::-webkit-scrollbar-thumb:hover {
-  background: #b0bec5;
 }
