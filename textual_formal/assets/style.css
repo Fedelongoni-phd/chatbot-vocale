@@ -1,86 +1,70 @@
 body {
-  background-color: #ffffff;
-  color: #111111;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chat-container {
+  background: #fff;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  margin: 0;
-  padding: 40px 20px;
+  overflow: hidden;
 }
 
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #0a3069; /* dark blue tone */
-}
-
-#chat {
-  background: #f6f8fa;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
+.chat-box {
+  flex-grow: 1;
+  padding: 16px;
   overflow-y: auto;
-  min-height: 300px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #d0d7de;
 }
 
 .msg {
-  margin: 10px 0;
+  margin: 8px 0;
   padding: 10px 14px;
   border-radius: 10px;
   max-width: 80%;
   line-height: 1.4;
 }
 
-.user {
-  background-color: #0a3069;
+.msg.user {
+  background-color: #e0f7fa;
   align-self: flex-end;
-  color: white;
-  margin-left: auto;
 }
 
-.bot {
-  background-color: #eaeef2;
+.msg.bot {
+  background-color: #f1f1f1;
   align-self: flex-start;
-  color: #111111;
-  margin-right: auto;
 }
 
-#controls {
-  margin-top: 30px;
+.input-area {
   display: flex;
-  gap: 10px;
-  width: 100%;
-  max-width: 600px;
+  border-top: 1px solid #ddd;
 }
 
 #userInput {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 1rem;
-}
-
-button {
-  background-color: #0a3069;
+  flex-grow: 1;
   border: none;
+  padding: 12px;
+  font-size: 16px;
+  outline: none;
+}
+
+#send {
+  background: #004aad;
   color: white;
-  font-size: 1rem;
-  padding: 10px 16px;
-  border-radius: 10px;
+  border: none;
+  padding: 12px 20px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.1s;
+  font-weight: bold;
 }
 
-button:hover {
-  background-color: #1a4d9a;
-  transform: scale(1.05);
+#send:hover {
+  background: #003380;
 }
-
