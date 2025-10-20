@@ -7,7 +7,14 @@ const sendBtn = document.getElementById("send");
 function addMessage(text, sender) {
   const div = document.createElement("div");
   div.classList.add("msg", sender);
-  div.textContent = text;
+
+  // ✅ Conversione Markdown → HTML semplice
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // **grassetto**
+    .replace(/\*(.*?)\*/g, "<em>$1</em>") // *corsivo*
+    .replace(/\n/g, "<br>"); // a capo
+
+  div.innerHTML = formatted; // usa HTML, non textContent
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
