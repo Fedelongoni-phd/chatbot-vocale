@@ -75,4 +75,3 @@ recordBtn.onclick = async () => {
     alert("Errore nell'accesso al microfono: " + err.message);
   }
 };
-
