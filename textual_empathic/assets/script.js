@@ -1,11 +1,11 @@
-// --- Textual Formal Chatbot Script --- //
+// --- Empathic Text Chatbot Script --- //
 
 const chatBox = document.getElementById("chat");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
-// 👉 URL del tuo Webhook n8n
-const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook/c87f3f26-4323-44cd-b610-03b990efd8c3";
+// 👉 URL del tuo webhook empatico (n8n)
+const N8N_WEBHOOK_URL = "https://n8n.srv1060901.hstgr.cloud/webhook/PASTE-YOUR-EMPATIC-WEBHOOK-HERE";
 
 // funzione per aggiungere messaggi nella chat
 function addMessage(text, sender) {
@@ -16,7 +16,7 @@ function addMessage(text, sender) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// invio messaggio all’agente
+// invio messaggio all’agente empatico
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
@@ -27,8 +27,8 @@ async function sendMessage() {
 
   try {
     const sessionId =
-      localStorage.getItem("sessionId_formal") || crypto.randomUUID();
-    localStorage.setItem("sessionId_formal", sessionId);
+      localStorage.getItem("sessionId_empatic") || crypto.randomUUID();
+    localStorage.setItem("sessionId_empatic", sessionId);
 
     const res = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
@@ -36,20 +36,20 @@ async function sendMessage() {
       body: JSON.stringify({ message: text, sessionId }),
     });
 
-    if (!res.ok) throw new Error("Errore nel server");
+    if (!res.ok) throw new Error("Server error");
 
     const data = await res.json();
-    const reply = data.output || data.text || "⚠️ Nessuna risposta ricevuta.";
+    const reply = data.output || data.text || "⚠️ No response received.";
     addMessage(reply, "bot");
   } catch (err) {
     console.error(err);
-    addMessage("⚠️ Errore: " + err.message, "bot");
+    addMessage("⚠️ Error: " + err.message, "bot");
   } finally {
     sendBtn.disabled = false;
   }
 }
 
-// evento di click e invio con ENTER
+// eventi click e invio con ENTER
 sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
