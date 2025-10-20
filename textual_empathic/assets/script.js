@@ -8,7 +8,7 @@ function addMessage(text, sender) {
   const div = document.createElement("div");
   div.classList.add("msg", sender);
 
-  // ✅ Converte Markdown in HTML
+  // ✅ Converte Markdown in HTML (se disponibile)
   const formatted = window.marked ? marked.parse(text) : text;
   div.innerHTML = formatted;
 
@@ -80,5 +80,4 @@ sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
-
 console.log("💜 Script empatico caricato correttamente");
