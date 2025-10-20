@@ -1,12 +1,13 @@
+/* 🎨 PALETTE EMPATICA (toni azzurro-violetto) */
 :root {
-  --accent-color: #5b4bff;      /* viola empatico */
-  --accent-hover: #4a3de6;
-  --user-bubble: #5b4bff;
-  --bot-bubble: #f3efff;
-  --container-bg: #f6f8fa;
+  --accent-color: #1f6feb;        /* azzurro principale */
+  --accent-hover: #388bfd;        /* azzurro più chiaro */
+  --user-bubble: #1f6feb;         /* bubble utente */
+  --bot-bubble: #f1f3f6;          /* bubble bot chiaro */
+  --container-bg: #f6f8fa;        /* sfondo contenitore */
 }
 
-/* STILE UNIFICATO */
+/* STILE BASE */
 body {
   background-color: #ffffff;
   color: #111111;
@@ -20,6 +21,7 @@ body {
   padding: 40px 20px;
 }
 
+/* TITOLO */
 h1 {
   font-size: 1.8rem;
   margin-bottom: 24px;
@@ -32,6 +34,7 @@ h1 {
   gap: 8px;
 }
 
+/* CONTENITORE CHAT */
 .chat-container {
   background: var(--container-bg);
   width: 100%;
@@ -52,6 +55,7 @@ h1 {
   padding-right: 8px;
 }
 
+/* MESSAGGI */
 .msg {
   margin: 10px 0;
   padding: 10px 14px;
@@ -76,6 +80,7 @@ h1 {
   margin-right: auto;
 }
 
+/* AREA INPUT */
 .input-area {
   position: absolute;
   bottom: 16px;
@@ -115,3 +120,5 @@ h1 {
   background-color: var(--accent-hover);
   transform: scale(1.05);
 }
+
+/
