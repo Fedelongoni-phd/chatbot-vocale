@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💙 Empathic Text Chatbot</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <title>💜 Text Chatbot</title>
+
+  <!-- CSS (percorso relativo alla cartella) -->
+  <link rel="stylesheet" href="./assets/style.css?v=2" />
+
+  <!-- Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-
 <body>
-  <h1>💬💙 Text Chatbot</h1>
+  <h1>💬 💜 <span>Text Chatbot</span></h1>
 
-  <div id="chat"></div>
+  <div class="chat-container">
+    <div id="chat" class="chat-box"></div>
 
-  <div id="inputArea">
-    <input type="text" id="userInput" placeholder="Type your message..." />
-    <button id="sendBtn">Send</button>
+    <div class="input-area">
+      <input id="userInput" type="text" placeholder="Type your message..." />
+      <button id="send">Send</button>
+    </div>
   </div>
 
-  <script src="assets/script.js"></script>
+  <!-- JS -->
+  <script src="https://fedelongoni-phd.github.io/multimodal-chatbots/textual_empathic/assets/script.js"></script>
 </body>
 </html>
