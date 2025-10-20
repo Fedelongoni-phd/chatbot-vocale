@@ -76,5 +76,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") sendMessage();
   });
 
-  console.log("💜 Script empatico caricato correttamente");
+  console.log("✅ Script empatico caricato correttamente");
 });
