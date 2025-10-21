@@ -3,14 +3,15 @@ const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
 const sendBtn = document.getElementById("send");
 
-let isReturning = false; // blocco durante animazione
+let isWaiting = false;   // il bot sta rispondendo
+let isReturning = false; // animazione in corso
 
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender);
   const bubble = document.createElement("div");
   bubble.classList.add("bubble");
-  bubble.textContent = text;
+  bubble.innerHTML = window.marked ? marked.parse(text) : text;
   msg.appendChild(bubble);
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
@@ -44,7 +45,8 @@ async function sendMessage(e) {
   addMessage(text, "user");
   input.value = "";
 
-  // freccia resta su durante l'elaborazione
+  // durante l'attesa resta su
+  isWaiting = true;
   sendBtn.classList.add("up");
   sendBtn.classList.add("sent");
 
@@ -67,21 +69,25 @@ async function sendMessage(e) {
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 
-  // ✅ ora che la risposta è arrivata → fa l’animazione di ritorno
+  // risposta ricevuta → ora può tornare giù
+  isWaiting = false;
   sendBtn.classList.remove("sent");
   sendBtn.classList.add("return");
   isReturning = true;
 
   whenAnimationEnds(sendBtn, () => {
     sendBtn.classList.remove("return");
-    sendBtn.classList.remove("up");
-    isReturning = false;
+    // piccolo delay per evitare rimbalzi
+    setTimeout(() => {
+      sendBtn.classList.remove("up");
+      isReturning = false;
+    }, 150);
   });
 }
 
-// --- FRECCIA DINAMICA MENTRE SCRIVI ---
+// Aggiornamento dinamico della freccia
 input.addEventListener("input", () => {
-  if (isReturning) return;
+  if (isReturning || isWaiting) return;
   if (input.value.trim() !== "") sendBtn.classList.add("up");
   else sendBtn.classList.remove("up");
 });
