@@ -1,10 +1,24 @@
-// ELEMENTI
+// --- ELEMENTI BASE ---
 const chat = document.getElementById("chat");
 const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
 const sendBtn = document.getElementById("send");
 
-// Aggiunge messaggio
+// --- UTILS STATO FRECCIA ---
+let isReturning = false;
+
+function updateButtonState() {
+  // Se sto tornando giù, non toccare lo stato
+  if (isReturning) return;
+
+  if (input.value.trim().length > 0) {
+    sendBtn.classList.add("up");     // freccia su
+  } else {
+    sendBtn.classList.remove("up");  // freccia giù
+  }
+}
+
+// --- AGGIUNGE MESSAGGIO IN CHAT ---
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender);
@@ -16,7 +30,7 @@ function addMessage(text, sender) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Indicatore “sta scrivendo…”
+// --- MOSTRA INDICATORE "STA SCRIVENDO..." ---
 function showTypingIndicator() {
   const typing = document.createElement("div");
   typing.classList.add("msg", "bot");
@@ -29,23 +43,22 @@ function showTypingIndicator() {
   return typing;
 }
 
-// SESSIONE: solo finché la pagina resta aperta
+// --- SESSIONE: solo finché la pagina resta aperta ---
 if (!sessionStorage.getItem("sessionId_empatico_testo")) {
   sessionStorage.setItem("sessionId_empatico_testo", crypto.randomUUID());
 }
 const sessionId = sessionStorage.getItem("sessionId_empatico_testo");
 
-// INVIO
+// --- INVIO MESSAGGIO ---
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = input.value.trim();
   if (!text) return;
 
   addMessage(text, "user");
-  input.value = "";
-
-  // Stato bottone: invio
-  sendBtn.classList.add("sent");
+  input.value = "";           // svuota input
+  updateButtonState();        // forza freccia giù subito
+  sendBtn.classList.add("sent"); // pulse di invio
 
   const typing = showTypingIndicator();
 
@@ -58,7 +71,6 @@ form.addEventListener("submit", async (e) => {
         body: JSON.stringify({ message: text, sessionId }),
       }
     );
-
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
     const data = await res.json();
 
@@ -73,27 +85,23 @@ form.addEventListener("submit", async (e) => {
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 
-  // 🔽 RITORNO DELLA FRECCIA
-  // 1) finisce l'effetto "sent"
+  // --- ANIMAZIONE DI RITORNO DELLA FRECCIA ---
   sendBtn.classList.remove("sent");
-  // 2) fa l'animazione di ritorno verso il basso
+  isReturning = true;                 // blocca update da input
   sendBtn.classList.add("return");
   sendBtn.addEventListener(
     "animationend",
     () => {
       sendBtn.classList.remove("return");
-      // se il campo è vuoto, togli anche "up" (freccia giù)
-      if (!input.value.trim()) sendBtn.classList.remove("up");
+      isReturning = false;            // sblocco
+      updateButtonState();            // stato finale coerente
     },
     { once: true }
   );
 });
 
-// FRECCIA DINAMICA: ruota quando scrivi, torna giù quando svuoti
-input.addEventListener("input", () => {
-  if (input.value.trim() !== "") {
-    sendBtn.classList.add("up");
-  } else if (!sendBtn.classList.contains("return")) {
-    sendBtn.classList.remove("up");
-  }
-});
+// --- FRECCIA DINAMICA MENTRE SCRIVI ---
+input.addEventListener("input", updateButtonState);
+
+// Stato iniziale coerente (input vuoto → freccia giù)
+updateButtonState();
