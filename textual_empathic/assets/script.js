@@ -1,10 +1,10 @@
-// --- ELEMENTI BASE ---
+// ELEMENTI
 const chat = document.getElementById("chat");
 const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
 const sendBtn = document.getElementById("send");
 
-// --- AGGIUNGE MESSAGGIO IN CHAT ---
+// Aggiunge messaggio
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender);
@@ -16,7 +16,7 @@ function addMessage(text, sender) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// --- MOSTRA INDICATORE "STA SCRIVENDO..." ---
+// Indicatore “sta scrivendo…”
 function showTypingIndicator() {
   const typing = document.createElement("div");
   typing.classList.add("msg", "bot");
@@ -29,27 +29,24 @@ function showTypingIndicator() {
   return typing;
 }
 
-// --- GESTIONE SESSIONE TEMPORANEA ---
-// Si resetta automaticamente al refresh
-if (!window.sessionStorage.getItem("sessionId_empatico_testo")) {
-  window.sessionStorage.setItem("sessionId_empatico_testo", crypto.randomUUID());
+// SESSIONE: solo finché la pagina resta aperta
+if (!sessionStorage.getItem("sessionId_empatico_testo")) {
+  sessionStorage.setItem("sessionId_empatico_testo", crypto.randomUUID());
 }
-const sessionId = window.sessionStorage.getItem("sessionId_empatico_testo");
+const sessionId = sessionStorage.getItem("sessionId_empatico_testo");
 
-// --- INVIO MESSAGGIO ---
+// INVIO
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = input.value.trim();
   if (!text) return;
 
-  // Mostra messaggio utente
   addMessage(text, "user");
   input.value = "";
 
-  // Effetto bottone "invio"
+  // Stato bottone: invio
   sendBtn.classList.add("sent");
 
-  // Mostra indicatore di digitazione
   const typing = showTypingIndicator();
 
   try {
@@ -68,26 +65,31 @@ form.addEventListener("submit", async (e) => {
     typing.remove();
 
     const reply =
-      data.output ||
-      data.text ||
-      data.reply ||
-      "💬 Nessuna risposta ricevuta dal server.";
+      data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
-
-    // 🔹 Bottone torna alla posizione base (come nel mockup)
-    sendBtn.classList.remove("sent");
-    sendBtn.classList.add("return");
-    setTimeout(() => {
-      sendBtn.classList.remove("return");
-    }, 600);
   } catch (err) {
     console.error("Errore:", err);
     typing.remove();
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
+
+  // 🔽 RITORNO DELLA FRECCIA
+  // 1) finisce l'effetto "sent"
+  sendBtn.classList.remove("sent");
+  // 2) fa l'animazione di ritorno verso il basso
+  sendBtn.classList.add("return");
+  sendBtn.addEventListener(
+    "animationend",
+    () => {
+      sendBtn.classList.remove("return");
+      // se il campo è vuoto, togli anche "up" (freccia giù)
+      if (!input.value.trim()) sendBtn.classList.remove("up");
+    },
+    { once: true }
+  );
 });
 
-// --- BOTTONCINO DINAMICO (ruota quando scrivi) ---
+// FRECCIA DINAMICA: ruota quando scrivi, torna giù quando svuoti
 input.addEventListener("input", () => {
   if (input.value.trim() !== "") {
     sendBtn.classList.add("up");
