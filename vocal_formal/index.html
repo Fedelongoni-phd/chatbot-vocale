@@ -1,27 +1,35 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot Vocale Formale</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎧 Chatbot Vocale Formale</title>
 
-  <!-- Collega il foglio di stile -->
-  <link rel="stylesheet" href="assets/style.css">
-</head>
+    <!-- Usa lo stesso CSS dell’empatico -->
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
 
-<body>
-  <h1>🎧💼 Chatbot Vocale </h1>
+  <body>
+    <main class="chat-wrapper">
+      <section class="chat-window" id="chat">
+        <div class="msg bot">
+          <div class="bubble">🎙️ Tieni premuto per parlare</div>
+        </div>
+      </section>
 
-  <div id="chat"></div>
+      <div class="voice-controls">
+        <button id="micButton" aria-label="Parla">
+          <div class="mic-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mic-icon" viewBox="0 0 24 24">
+              <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z" />
+              <path d="M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-3.08A7 7 0 0 0 19 11z" />
+            </svg>
+          </div>
+        </button>
+        <audio id="replyAudio" hidden></audio>
+      </div>
+    </main>
 
-  <div id="controls">
-    <button id="record">🎤 Premi per parlare</button>
-    <div id="status">In attesa...</div>
-    <audio id="replyAudio" controls hidden></audio>
-  </div>
-
-  <!-- Collega lo script -->
-  <script src="assets/script.js"></script>
-</body>
+    <script src="./assets/script.js"></script>
+  </body>
 </html>
-
