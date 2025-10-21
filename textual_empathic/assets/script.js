@@ -3,8 +3,8 @@ const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
 const sendBtn = document.getElementById("send");
 
-let isWaiting = false;   // il bot sta rispondendo
-let isReturning = false; // animazione in corso
+let isWaiting = false;   // true = bot sta rispondendo
+let isReturning = false; // true = animazione di ritorno in corso
 
 function addMessage(text, sender) {
   const msg = document.createElement("div");
@@ -37,6 +37,7 @@ function whenAnimationEnds(el, cb) {
   el.addEventListener("animationend", handler);
 }
 
+// === Invio messaggio principale ===
 async function sendMessage(e) {
   e.preventDefault();
   const text = input.value.trim();
@@ -45,10 +46,9 @@ async function sendMessage(e) {
   addMessage(text, "user");
   input.value = "";
 
-  // durante l'attesa resta su
+  // 🔼 fase di attesa → resta su
   isWaiting = true;
-  sendBtn.classList.add("up");
-  sendBtn.classList.add("sent");
+  sendBtn.classList.add("up", "sent");
 
   const typing = showTypingIndicator();
 
@@ -61,15 +61,18 @@ async function sendMessage(e) {
         body: JSON.stringify({ message: text }),
       }
     );
+    if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
     const data = await res.json();
+
     typing.remove();
-    addMessage(data.output || data.text || "💬 Nessuna risposta ricevuta.", "bot");
-  } catch {
+    addMessage(data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta.", "bot");
+  } catch (err) {
+    console.error("Errore:", err);
     typing.remove();
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 
-  // risposta ricevuta → ora può tornare giù
+  // ✅ risposta arrivata → fa animazione di ritorno
   isWaiting = false;
   sendBtn.classList.remove("sent");
   sendBtn.classList.add("return");
@@ -77,19 +80,24 @@ async function sendMessage(e) {
 
   whenAnimationEnds(sendBtn, () => {
     sendBtn.classList.remove("return");
-    // piccolo delay per evitare rimbalzi
+    // piccolo ritardo per stabilizzare la posizione giù
     setTimeout(() => {
       sendBtn.classList.remove("up");
       isReturning = false;
-    }, 150);
+    }, 250);
   });
 }
 
-// Aggiornamento dinamico della freccia
+// === Aggiornamento dinamico durante la scrittura ===
 input.addEventListener("input", () => {
-  if (isReturning || isWaiting) return;
-  if (input.value.trim() !== "") sendBtn.classList.add("up");
-  else sendBtn.classList.remove("up");
+  // Se sto aspettando il bot o tornando giù → ignora
+  if (isWaiting || isReturning) return;
+
+  if (input.value.trim() !== "") {
+    sendBtn.classList.add("up");
+  } else {
+    sendBtn.classList.remove("up");
+  }
 });
 
 form.addEventListener("submit", sendMessage);
