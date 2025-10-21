@@ -3,20 +3,24 @@ const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
 const sendBtn = document.getElementById("send");
 
-let isWaiting = false;   // true = il bot sta rispondendo
-let isReturning = false; // true = animazione in corso
+let isWaiting = false;   // il bot sta rispondendo
+let isAnimating = false; // la freccia è in animazione
 
+// === Funzione per aggiungere un messaggio ===
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender);
+
   const bubble = document.createElement("div");
   bubble.classList.add("bubble");
   bubble.innerHTML = window.marked ? marked.parse(text) : text;
+
   msg.appendChild(bubble);
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
 }
 
+// === Indicatore di "sta scrivendo" ===
 function showTypingIndicator() {
   const typing = document.createElement("div");
   typing.classList.add("msg", "bot");
@@ -29,25 +33,20 @@ function showTypingIndicator() {
   return typing;
 }
 
-function whenAnimationEnds(el, cb) {
-  const handler = () => {
-    el.removeEventListener("animationend", handler);
-    cb();
-  };
-  el.addEventListener("animationend", handler);
-}
-
+// === Invia messaggio ===
 async function sendMessage(e) {
   e.preventDefault();
   const text = input.value.trim();
-  if (!text) return;
+  if (!text || isWaiting) return; // evita doppio invio
 
+  // Mostra messaggio utente
   addMessage(text, "user");
   input.value = "";
 
-  // ↑ resta su finché non risponde il bot
+  // Imposta stato "in attesa"
   isWaiting = true;
-  sendBtn.classList.add("up", "sent");
+  isAnimating = false;
+  sendBtn.classList.add("up"); // resta su
 
   const typing = showTypingIndicator();
 
@@ -60,36 +59,47 @@ async function sendMessage(e) {
         body: JSON.stringify({ message: text }),
       }
     );
+
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
     const data = await res.json();
 
     typing.remove();
-    addMessage(data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta.", "bot");
+    addMessage(
+      data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta.",
+      "bot"
+    );
   } catch (err) {
     typing.remove();
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 
-  // ↓ solo ora fa il ritorno
+  // Dopo la risposta → avvia ritorno
   isWaiting = false;
-  sendBtn.classList.remove("sent");
-  sendBtn.classList.add("return");
-  isReturning = true;
+  isAnimating = true;
 
-  whenAnimationEnds(sendBtn, () => {
-    sendBtn.classList.remove("return");
-    setTimeout(() => {
+  sendBtn.classList.add("return");
+  sendBtn.classList.remove("sent");
+
+  // Quando l’animazione è finita → resta giù
+  sendBtn.addEventListener(
+    "animationend",
+    () => {
+      sendBtn.classList.remove("return");
       sendBtn.classList.remove("up");
-      isReturning = false;
-    }, 250);
-  });
+      isAnimating = false;
+    },
+    { once: true }
+  );
 }
 
-// Input dinamico
+// === Input dinamico ===
 input.addEventListener("input", () => {
-  if (isWaiting || isReturning) return;
-  if (input.value.trim() !== "") sendBtn.classList.add("up");
-  else sendBtn.classList.remove("up");
+  if (isWaiting || isAnimating) return;
+  if (input.value.trim() !== "") {
+    sendBtn.classList.add("up");
+  } else {
+    sendBtn.classList.remove("up");
+  }
 });
 
 form.addEventListener("submit", sendMessage);
