@@ -30,28 +30,29 @@ function showTypingIndicator() {
 }
 
 // --- GESTIONE SESSIONE TEMPORANEA ---
-// Usa sessionStorage: si resetta ad ogni chiusura/refresh
+// Si resetta automaticamente al refresh
 if (!window.sessionStorage.getItem("sessionId_empatico_testo")) {
   window.sessionStorage.setItem("sessionId_empatico_testo", crypto.randomUUID());
 }
 const sessionId = window.sessionStorage.getItem("sessionId_empatico_testo");
 
-// --- INVIO MESSAGGIO ---
+// --- GESTIONE INVIO MESSAGGIO ---
 form.addEventListener("submit", async (e) => {
-  e.preventDefault(); // Evita refresh pagina
+  e.preventDefault();
   const text = input.value.trim();
   if (!text) return;
 
-  // Messaggio utente
+  // Mostra messaggio utente
   addMessage(text, "user");
   input.value = "";
-  sendBtn.classList.add("sent"); // Animazione bottone
+
+  // Animazioni bottone send
+  sendBtn.classList.add("sent");
 
   // Mostra i tre puntini
   const typing = showTypingIndicator();
 
   try {
-    // 🔗 Webhook n8n
     const res = await fetch(
       "https://n8n.srv1060901.hstgr.cloud/webhook/b37cb498-e21a-4a99-a507-93def91fc18f",
       {
@@ -64,10 +65,8 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
     const data = await res.json();
 
-    // Rimuove i tre puntini
     typing.remove();
 
-    // Risposta bot
     const reply =
       data.output ||
       data.text ||
@@ -75,8 +74,12 @@ form.addEventListener("submit", async (e) => {
       "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
 
-    // Ritorno pulsante alla posizione base
+    // 🔹 Bottone ritorna allo stato base (come nel mockup)
     sendBtn.classList.remove("sent");
+    sendBtn.classList.add("return");
+    setTimeout(() => {
+      sendBtn.classList.remove("return");
+    }, 600);
   } catch (err) {
     console.error("Errore:", err);
     typing.remove();
@@ -84,11 +87,11 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// --- BOTTONCINO DINAMICO ---
+// --- BOTTONCINO DINAMICO (quando scrivi ruota) ---
 input.addEventListener("input", () => {
   if (input.value.trim() !== "") {
     sendBtn.classList.add("up");
-  } else {
+  } else if (!sendBtn.classList.contains("return")) {
     sendBtn.classList.remove("up");
   }
 });
