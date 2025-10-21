@@ -1,9 +1,10 @@
-// Selettori base
+// --- ELEMENTI BASE ---
 const chat = document.getElementById("chat");
 const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
+const sendBtn = document.getElementById("send");
 
-// Funzione per aggiungere messaggi in chat
+// --- AGGIUNGE MESSAGGIO IN CHAT ---
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender);
@@ -15,7 +16,7 @@ function addMessage(text, sender) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Mostra indicatore “il bot sta scrivendo...”
+// --- MOSTRA INDICATORE "STA SCRIVENDO..." ---
 function showTypingIndicator() {
   const typing = document.createElement("div");
   typing.classList.add("msg", "bot");
@@ -28,26 +29,29 @@ function showTypingIndicator() {
   return typing;
 }
 
-// 🔹 Gestione invio messaggi
+// --- GESTIONE SESSIONE TEMPORANEA ---
+// Usa sessionStorage: si resetta ad ogni chiusura/refresh
+if (!window.sessionStorage.getItem("sessionId_empatico_testo")) {
+  window.sessionStorage.setItem("sessionId_empatico_testo", crypto.randomUUID());
+}
+const sessionId = window.sessionStorage.getItem("sessionId_empatico_testo");
+
+// --- INVIO MESSAGGIO ---
 form.addEventListener("submit", async (e) => {
-  e.preventDefault(); // <--- ✅ impedisce il refresh della pagina
+  e.preventDefault(); // Evita refresh pagina
   const text = input.value.trim();
   if (!text) return;
 
-  // Mostra messaggio dell’utente
+  // Messaggio utente
   addMessage(text, "user");
   input.value = "";
+  sendBtn.classList.add("sent"); // Animazione bottone
 
   // Mostra i tre puntini
   const typing = showTypingIndicator();
 
-  // Gestione sessione (mantiene memoria conversazione)
-  const sessionId =
-    localStorage.getItem("sessionId_empatico_testo") || crypto.randomUUID();
-  localStorage.setItem("sessionId_empatico_testo", sessionId);
-
   try {
-    // 🔗 Webhook n8n (sostituisci con il tuo se diverso)
+    // 🔗 Webhook n8n
     const res = await fetch(
       "https://n8n.srv1060901.hstgr.cloud/webhook/b37cb498-e21a-4a99-a507-93def91fc18f",
       {
@@ -63,16 +67,28 @@ form.addEventListener("submit", async (e) => {
     // Rimuove i tre puntini
     typing.remove();
 
-    // Mostra la risposta del bot
+    // Risposta bot
     const reply =
       data.output ||
       data.text ||
       data.reply ||
       "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
+
+    // Ritorno pulsante alla posizione base
+    sendBtn.classList.remove("sent");
   } catch (err) {
     console.error("Errore:", err);
     typing.remove();
     addMessage("⚠️ Errore di connessione al server.", "bot");
+  }
+});
+
+// --- BOTTONCINO DINAMICO ---
+input.addEventListener("input", () => {
+  if (input.value.trim() !== "") {
+    sendBtn.classList.add("up");
+  } else {
+    sendBtn.classList.remove("up");
   }
 });
