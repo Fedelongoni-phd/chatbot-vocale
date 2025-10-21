@@ -1,44 +1,27 @@
 :root {
-  --user-bg: #004aad;
-  --user-bg-light: #0056c4;
-  --bot-bg: #f1f1f1;
-  --container-bg: #f6f8fa;
+  --user-bg: #1f2937;
+  --user-bg-light: #334155;
+  --bot-bg: #f9fafb;
+  --container-bg: #ffffff;
   --radius: 14px;
 }
 
 body {
-  background: #ffffff;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f3f4f6;
+  font-family: system-ui, sans-serif;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  margin: 0;
-  padding: 40px 20px;
-}
-
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 24px;
-  text-align: center;
-  color: var(--user-bg);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 .chat-wrapper {
   background: var(--container-bg);
-  width: 100%;
-  max-width: 600px;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #d0d7de;
-  padding: 24px 20px 80px;
-  position: relative;
+  width: 100%;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -47,84 +30,81 @@ h1 {
 .chat-window {
   flex-grow: 1;
   overflow-y: auto;
-  padding-right: 8px;
+  padding: 20px;
 }
 
 .msg {
+  display: flex;
   margin: 10px 0;
+}
+
+.bubble {
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: var(--radius);
+  line-height: 1.4;
   max-width: 80%;
-  line-height: 1.5;
-  word-wrap: break-word;
-  font-size: 1rem;
 }
 
 .msg.user {
-  background-color: var(--user-bg);
-  color: #ffffff;
-  align-self: flex-end;
-  margin-left: auto;
+  justify-content: flex-end;
+}
+.msg.user .bubble {
+  background: var(--user-bg);
+  color: #fff;
+  border-bottom-right-radius: 2px;
 }
 
-.msg.bot {
-  background-color: var(--bot-bg);
+.msg.bot .bubble {
+  background: var(--bot-bg);
   color: #111;
-  align-self: flex-start;
-  margin-right: auto;
+  border-bottom-left-radius: 2px;
 }
 
 /* INPUT AREA */
 .chat-input-area {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 40px);
   display: flex;
-  background: #ffffff;
-  border-radius: 50px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  border: 1px solid #ddd;
-  overflow: hidden;
+  padding: 12px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  align-items: center;
 }
 
 .chat-input-area input {
   flex: 1;
   padding: 12px 16px;
-  border: none;
+  border: 1px solid #ddd;
+  border-radius: 12px;
   outline: none;
   font-size: 1rem;
-  border-radius: 50px 0 0 50px;
 }
 
 .chat-input-area button {
-  background-color: var(--user-bg);
-  color: white;
+  margin-left: 8px;
+  background: var(--user-bg);
+  color: #fff;
   border: none;
-  padding: 0 20px;
-  font-size: 1rem;
-  font-weight: 600;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   cursor: pointer;
-  border-radius: 0 50px 50px 0;
-  transition: background 0.3s, transform 0.1s;
-  transform: rotate(0deg);
+  font-size: 1.1rem;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease, background 0.25s ease;
 }
 
 .chat-input-area button:hover {
-  background-color: var(--user-bg-light);
-  transform: scale(1.05);
+  background: var(--user-bg-light);
 }
 
-/* ↑ Ruota in su quando scrivi */
+/* Rotazione su scrittura */
 .chat-input-area button.up {
   transform: rotate(90deg);
 }
 
-/* 💨 Tap di invio */
+/* Tap d’invio */
 @keyframes sendTap {
   0% { transform: rotate(90deg) scale(1); }
   50% { transform: rotate(95deg) scale(0.9); }
@@ -134,7 +114,7 @@ h1 {
   animation: sendTap 0.3s ease;
 }
 
-/* 🔽 Ritorno fluido */
+/* Ritorno con rimbalzo */
 @keyframes returnSmooth {
   0% { transform: rotate(90deg); }
   70% { transform: rotate(-15deg); }
@@ -144,7 +124,7 @@ h1 {
   animation: returnSmooth 0.6s cubic-bezier(0.25, 1.15, 0.5, 1) forwards;
 }
 
-/* --- INDICATORE "STA SCRIVENDO..." --- */
+/* TYPING INDICATOR */
 .typing-indicator {
   display: flex;
   gap: 4px;
@@ -168,6 +148,12 @@ h1 {
 .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes blink {
-  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
-  40% { opacity: 1; transform: translateY(-3px); }
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
