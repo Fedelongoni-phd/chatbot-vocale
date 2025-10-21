@@ -121,4 +121,14 @@ h1 {
   transform: scale(1.05);
 }
 
-/
+/* SCROLLBAR (moderna e delicata) */
+#chat::-webkit-scrollbar {
+  width: 6px;
+}
+#chat::-webkit-scrollbar-thumb {
+  background-color: rgba(31, 111, 235, 0.4);
+  border-radius: 3px;
+}
+#chat::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(31, 111, 235, 0.6);
+}
