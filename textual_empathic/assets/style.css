@@ -135,24 +135,23 @@ body {
   transform: translateY(-1px);
 }
 
-/* --- BOTTONE DINAMICO (rotazione e animazioni) --- */
+/* --- BOTTONE DINAMICO (rotazione quando scrivi) --- */
 .chat-input-area button.up {
   transform: rotate(90deg);
 }
 
-.chat-input-area button.sent {
-  animation: sendPulseTrail 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* --- ANIMAZIONE PULSANTE SEND --- */
+/* --- ANIMAZIONE INVIO --- */
 @keyframes sendPulseTrail {
   0%   { transform: rotate(90deg); filter: brightness(1); }
   30%  { transform: rotate(100deg); filter: brightness(1.15); }
   60%  { transform: rotate(95deg);  filter: brightness(1.1); }
   100% { transform: rotate(90deg);  filter: brightness(1); }
 }
+.chat-input-area button.sent {
+  animation: sendPulseTrail 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
-/* --- ANIMAZIONE RITORNO (fluida e realistica) --- */
+/* --- ANIMAZIONE RITORNO (freccia torna giù) --- */
 @keyframes buttonReturn {
   0%   { transform: rotate(90deg); }
   60%  { transform: rotate(-3deg); }
@@ -180,19 +179,11 @@ body {
   animation: blink 1.2s infinite ease-in-out;
 }
 
-.typing-indicator span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-indicator span:nth-child(3) {
-  animation-delay: 0.4s;
-}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
 /* --- SCROLLBAR --- */
-.chat-window::-webkit-scrollbar {
-  width: 6px;
-}
-
+.chat-window::-webkit-scrollbar { width: 6px; }
 .chat-window::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
@@ -200,14 +191,8 @@ body {
 
 /* --- ANIMAZIONI DI BASE --- */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes moveGradient {
