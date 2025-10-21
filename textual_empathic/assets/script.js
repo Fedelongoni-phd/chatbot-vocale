@@ -3,8 +3,8 @@ const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
 const sendBtn = document.getElementById("send");
 
-let isWaiting = false;   // true = bot sta rispondendo
-let isReturning = false; // true = animazione di ritorno in corso
+let isWaiting = false;   // true = il bot sta rispondendo
+let isReturning = false; // true = animazione in corso
 
 function addMessage(text, sender) {
   const msg = document.createElement("div");
@@ -37,7 +37,6 @@ function whenAnimationEnds(el, cb) {
   el.addEventListener("animationend", handler);
 }
 
-// === Invio messaggio principale ===
 async function sendMessage(e) {
   e.preventDefault();
   const text = input.value.trim();
@@ -46,7 +45,7 @@ async function sendMessage(e) {
   addMessage(text, "user");
   input.value = "";
 
-  // 🔼 fase di attesa → resta su
+  // ↑ resta su finché non risponde il bot
   isWaiting = true;
   sendBtn.classList.add("up", "sent");
 
@@ -67,12 +66,11 @@ async function sendMessage(e) {
     typing.remove();
     addMessage(data.output || data.text || data.reply || "💬 Nessuna risposta ricevuta.", "bot");
   } catch (err) {
-    console.error("Errore:", err);
     typing.remove();
     addMessage("⚠️ Errore di connessione al server.", "bot");
   }
 
-  // ✅ risposta arrivata → fa animazione di ritorno
+  // ↓ solo ora fa il ritorno
   isWaiting = false;
   sendBtn.classList.remove("sent");
   sendBtn.classList.add("return");
@@ -80,7 +78,6 @@ async function sendMessage(e) {
 
   whenAnimationEnds(sendBtn, () => {
     sendBtn.classList.remove("return");
-    // piccolo ritardo per stabilizzare la posizione giù
     setTimeout(() => {
       sendBtn.classList.remove("up");
       isReturning = false;
@@ -88,16 +85,11 @@ async function sendMessage(e) {
   });
 }
 
-// === Aggiornamento dinamico durante la scrittura ===
+// Input dinamico
 input.addEventListener("input", () => {
-  // Se sto aspettando il bot o tornando giù → ignora
   if (isWaiting || isReturning) return;
-
-  if (input.value.trim() !== "") {
-    sendBtn.classList.add("up");
-  } else {
-    sendBtn.classList.remove("up");
-  }
+  if (input.value.trim() !== "") sendBtn.classList.add("up");
+  else sendBtn.classList.remove("up");
 });
 
 form.addEventListener("submit", sendMessage);
