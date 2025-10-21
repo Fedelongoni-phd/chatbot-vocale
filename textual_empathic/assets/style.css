@@ -10,8 +10,12 @@
   --bot-bg: #f3f4f6;
 }
 
-/* BASE */
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* RESET BASE */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   font-family: var(--font-main);
@@ -23,7 +27,7 @@ body {
   height: 100vh;
 }
 
-/* STRUTTURA CHAT */
+/* --- STRUTTURA CHAT --- */
 .chat-wrapper {
   width: 420px;
   max-width: 94%;
@@ -36,6 +40,7 @@ body {
   overflow: hidden;
   border: 1px solid #e5e7eb;
 }
+
 .chat-window {
   flex: 1;
   padding: 20px;
@@ -45,10 +50,19 @@ body {
   background: var(--white);
 }
 
-/* MESSAGGI */
-.msg { display: flex; margin: 6px 0; }
-.msg.bot { justify-content: flex-start; }
-.msg.user { justify-content: flex-end; }
+/* --- MESSAGGI --- */
+.msg {
+  display: flex;
+  margin: 6px 0;
+}
+
+.msg.bot {
+  justify-content: flex-start;
+}
+
+.msg.user {
+  justify-content: flex-end;
+}
 
 .bubble {
   padding: 11px 15px;
@@ -64,6 +78,7 @@ body {
   color: var(--text-color);
   border-radius: var(--radius) var(--radius) var(--radius) 4px;
 }
+
 .msg.user .bubble {
   background: linear-gradient(135deg, var(--user-bg), var(--user-bg-light));
   background-size: 200% 200%;
@@ -72,7 +87,7 @@ body {
   animation: fadeIn 0.3s ease, moveGradient 4s ease-in-out infinite;
 }
 
-/* AREA INPUT */
+/* --- AREA INPUT --- */
 .chat-input-area {
   display: flex;
   align-items: center;
@@ -91,12 +106,13 @@ body {
   outline: none;
   transition: all 0.25s ease;
 }
+
 .chat-input-area input:focus {
   border-color: #cbd5e1;
   box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.08);
 }
 
-/* --- BOTTONE INVIO ELEGANT MINIMAL --- */
+/* --- BOTTONE INVIO --- */
 .chat-input-area button {
   margin-left: 8px;
   background: var(--user-bg);
@@ -110,25 +126,30 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.3s ease, background 0.25s ease;
+  transition: transform 0.3s ease, background 0.25s ease, filter 0.25s ease;
 }
+
+/* Hover */
 .chat-input-area button:hover {
   background: var(--user-bg-light);
   transform: translateY(-1px);
 }
+
+/* --- BOTTONE DINAMICO (rotazione e animazioni) --- */
 .chat-input-area button.up {
   transform: rotate(90deg);
 }
 
-/* --- ANIMAZIONE INVIO (solo rotazione + luminosità leggera) --- */
+.chat-input-area button.sent {
+  animation: sendPulseTrail 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- ANIMAZIONE PULSANTE SEND --- */
 @keyframes sendPulseTrail {
   0%   { transform: rotate(90deg); filter: brightness(1); }
   30%  { transform: rotate(100deg); filter: brightness(1.15); }
   60%  { transform: rotate(95deg);  filter: brightness(1.1); }
   100% { transform: rotate(90deg);  filter: brightness(1); }
-}
-.chat-input-area button.sent {
-  animation: sendPulseTrail 0.45s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* --- ANIMAZIONE RITORNO (fluida e realistica) --- */
@@ -141,7 +162,7 @@ body {
   animation: buttonReturn 0.45s cubic-bezier(0.25, 1.15, 0.5, 1) 0.1s forwards;
 }
 
-/* --- TYPING INDICATOR --- */
+/* --- INDICATORE "STA SCRIVENDO..." --- */
 .typing-indicator {
   display: flex;
   gap: 4px;
@@ -150,6 +171,7 @@ body {
   border-radius: var(--radius);
   width: fit-content;
 }
+
 .typing-indicator span {
   width: 6px;
   height: 6px;
@@ -157,14 +179,44 @@ body {
   border-radius: 50%;
   animation: blink 1.2s infinite ease-in-out;
 }
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
-/* --- SCROLLBAR + BASE --- */
-.chat-window::-webkit-scrollbar { width: 6px; }
-.chat-window::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
 
-/* --- ANIMAZIONI BASE --- */
-@keyframes fadeIn { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-@keyframes moveGradient { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
-@keyframes blink { 0%,80%,100%{opacity:0.3; transform:translateY(0);} 40%{opacity:1; transform:translateY(-3px);} }
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* --- SCROLLBAR --- */
+.chat-window::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-window::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+
+/* --- ANIMAZIONI DI BASE --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes moveGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
