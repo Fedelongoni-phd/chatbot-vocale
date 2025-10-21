@@ -1,9 +1,9 @@
+// Selettori base
 const chat = document.getElementById("chat");
 const input = document.getElementById("userInput");
 const form = document.getElementById("chatForm");
-const sendBtn = document.getElementById("send");
 
-// Aggiunge un messaggio in chat
+// Funzione per aggiungere messaggi in chat
 function addMessage(text, sender) {
   const msg = document.createElement("div");
   msg.classList.add("msg", sender);
@@ -15,7 +15,7 @@ function addMessage(text, sender) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Mostra i tre puntini "il bot sta scrivendo..."
+// Mostra indicatore “il bot sta scrivendo...”
 function showTypingIndicator() {
   const typing = document.createElement("div");
   typing.classList.add("msg", "bot");
@@ -28,24 +28,26 @@ function showTypingIndicator() {
   return typing;
 }
 
-// Invia messaggio al backend n8n
+// 🔹 Gestione invio messaggi
 form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  e.preventDefault(); // <--- ✅ impedisce il refresh della pagina
   const text = input.value.trim();
   if (!text) return;
 
+  // Mostra messaggio dell’utente
   addMessage(text, "user");
   input.value = "";
 
+  // Mostra i tre puntini
   const typing = showTypingIndicator();
 
-  // Gestione sessione (per mantenere memoria)
+  // Gestione sessione (mantiene memoria conversazione)
   const sessionId =
     localStorage.getItem("sessionId_empatico_testo") || crypto.randomUUID();
   localStorage.setItem("sessionId_empatico_testo", sessionId);
 
   try {
-    // 🔗 Webhook n8n
+    // 🔗 Webhook n8n (sostituisci con il tuo se diverso)
     const res = await fetch(
       "https://n8n.srv1060901.hstgr.cloud/webhook/b37cb498-e21a-4a99-a507-93def91fc18f",
       {
@@ -58,8 +60,10 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error(`Errore HTTP ${res.status}`);
     const data = await res.json();
 
+    // Rimuove i tre puntini
     typing.remove();
 
+    // Mostra la risposta del bot
     const reply =
       data.output ||
       data.text ||
