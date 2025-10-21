@@ -36,7 +36,7 @@ if (!window.sessionStorage.getItem("sessionId_empatico_testo")) {
 }
 const sessionId = window.sessionStorage.getItem("sessionId_empatico_testo");
 
-// --- GESTIONE INVIO MESSAGGIO ---
+// --- INVIO MESSAGGIO ---
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = input.value.trim();
@@ -46,10 +46,10 @@ form.addEventListener("submit", async (e) => {
   addMessage(text, "user");
   input.value = "";
 
-  // Animazioni bottone send
+  // Effetto bottone "invio"
   sendBtn.classList.add("sent");
 
-  // Mostra i tre puntini
+  // Mostra indicatore di digitazione
   const typing = showTypingIndicator();
 
   try {
@@ -74,7 +74,7 @@ form.addEventListener("submit", async (e) => {
       "💬 Nessuna risposta ricevuta dal server.";
     addMessage(reply, "bot");
 
-    // 🔹 Bottone ritorna allo stato base (come nel mockup)
+    // 🔹 Bottone torna alla posizione base (come nel mockup)
     sendBtn.classList.remove("sent");
     sendBtn.classList.add("return");
     setTimeout(() => {
@@ -87,7 +87,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// --- BOTTONCINO DINAMICO (quando scrivi ruota) ---
+// --- BOTTONCINO DINAMICO (ruota quando scrivi) ---
 input.addEventListener("input", () => {
   if (input.value.trim() !== "") {
     sendBtn.classList.add("up");
