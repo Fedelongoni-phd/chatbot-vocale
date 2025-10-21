@@ -5,30 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🩵 Text Chatbot</title>
 
-    <!-- Foglio di stile -->
-    <link rel="stylesheet" href="./assets/style.css?v=3" />
+    <!-- Stile -->
+    <link rel="stylesheet" href="./style.css" />
 
-    <!-- Libreria per Markdown -->
+    <!-- Libreria Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
 
   <body>
-    <h1>💬🩵 Text Chatbot</h1>
+    <main class="chat-wrapper">
+      <section class="chat-window" id="chat">
+        <div class="msg bot">
+          <div class="bubble">👋 Ciao! Come posso aiutarti oggi?</div>
+        </div>
+      </section>
 
-    <div class="chat-container">
-      <div id="chat"></div>
-
-      <div class="input-area">
+      <form class="chat-input-area" id="chatForm" autocomplete="off">
         <input
-          id="userInput"
           type="text"
-          placeholder="Type your message..."
+          id="userInput"
+          placeholder="Scrivi un messaggio..."
+          aria-label="Scrivi un messaggio"
         />
-        <button id="send">Send</button>
-      </div>
-    </div>
+        <button id="send" type="submit" aria-label="Invia messaggio">↩</button>
+      </form>
+    </main>
 
-    <!-- ⚠️ Script messo in fondo al body -->
-    <script src="./assets/script.js"></script>
+    <script src="./script.js"></script>
   </body>
 </html>
