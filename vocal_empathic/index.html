@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot Vocale</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎧 Chatbot Vocale Empatico</title>
 
-  <!-- Collega il file CSS esterno -->
-  <link rel="stylesheet" href="assets/style.css">
-</head>
+    <!-- Stile -->
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
 
-<body>
-  <h1>🎧🩵 Chatbot Vocale</h1>
+  <body>
+    <main class="chat-wrapper">
+      <h1>🎧🩵 Chatbot Vocale</h1>
 
-  <div id="chat"></div>
+      <section class="chat-window" id="chat">
+        <div class="msg bot">
+          <div class="bubble">
+            👋 Ciao! Premi il microfono e parla: ti risponderò a voce 🩵
+          </div>
+        </div>
+      </section>
 
-  <div id="controls">
-    <button id="record">🎤 Premi per parlare</button>
-    <div id="status">In attesa...</div>
-    <audio id="replyAudio" controls hidden></audio>
-  </div>
+      <div class="chat-input-area" id="voice-controls">
+        <button id="record" aria-label="Premi per parlare">🎤</button>
+        <div id="status">In attesa...</div>
+        <audio id="replyAudio" controls hidden></audio>
+      </div>
+    </main>
 
-  <!-- Collega il file JavaScript esterno -->
-  <script src="assets/script.js"></script>
-</body>
+    <!-- Script -->
+    <script src="./assets/script.js"></script>
+  </body>
 </html>
