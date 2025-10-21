@@ -4,18 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Empatica</title>
-    <link rel="stylesheet" href="./style.css" />
+
+    <!-- 🎨 Collegamento corretto al CSS -->
+    <link rel="stylesheet" href="./assets/style.css" />
+
+    <!-- Libreria per interpretare Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
 
   <body>
     <main class="chat-wrapper">
+      <!-- Finestra della chat -->
       <section class="chat-window" id="chat">
         <div class="msg bot">
           <div class="bubble">👋 Ciao! Come posso aiutarti oggi?</div>
         </div>
       </section>
 
+      <!-- Area di input -->
       <form class="chat-input-area" id="chatForm" autocomplete="off">
         <input
           type="text"
@@ -27,6 +33,7 @@
       </form>
     </main>
 
-    <script src="./script.js"></script>
+    <!-- ⚙️ Collegamento corretto al JavaScript -->
+    <script src="./assets/script.js"></script>
   </body>
 </html>
